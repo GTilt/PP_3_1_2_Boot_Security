@@ -39,7 +39,7 @@ public class User implements UserDetails {
 
     public User (String username, List<String> roles) {
         this.username = username;
-        this.roles = new HashSet<Role>();
+        this.roles = new HashSet<>();
     }
 
     public Long getId() {
@@ -98,9 +98,5 @@ public class User implements UserDetails {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-
-
-
 
 }

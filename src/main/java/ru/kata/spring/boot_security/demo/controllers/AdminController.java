@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -33,7 +32,7 @@ public class AdminController {
 
     @PostMapping("/admin/add")
     public String addUser(@ModelAttribute("user") User user, Model model) {
-        if (userService.findByUsername(user.getUsername()) != null){
+        if (userService.findByUsername(user.getUsername()) != null) {
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "registration";
         }
@@ -45,7 +44,7 @@ public class AdminController {
     @GetMapping("/admin/edit")
     public String editUser(@RequestParam Long id, ModelMap model) {
         User user = userService.findById(id);
-        if(user != null) {
+        if (user != null) {
             model.addAttribute("user", user);
             return "edit";
         } else {
@@ -62,7 +61,7 @@ public class AdminController {
     @GetMapping("/admin/delete")
     public String deleteUser(@RequestParam Long id, ModelMap model) {
         User user = userService.findById(id);
-        if(user != null) {
+        if (user != null) {
             model.addAttribute("user", user);
             return "delete";
         } else {
@@ -76,4 +75,14 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @GetMapping("/admin/user")
+    public String viewUser(@RequestParam Long id, ModelMap model) {
+        User user = userService.findById(id);
+        if (user != null) {
+            model.addAttribute("user", user);
+            return "user";
+        } else {
+            return "redirect:/admin";
+        }
+    }
 }
