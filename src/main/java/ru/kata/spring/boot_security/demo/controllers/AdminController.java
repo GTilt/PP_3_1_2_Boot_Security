@@ -7,53 +7,70 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
+
+import java.security.Principal;
+import java.util.Set;
 
 @Controller
 public class AdminController {
     private final UserService userService;
+    private final RoleRepository roleRepository;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/admin")
-    public String userList(Model model) {
+    public String userList(Model model, Principal principal) {
         model.addAttribute("allUsers", userService.getUsers());
+        User user = userService.findByUsername(principal.getName());
+        model.addAttribute("currentUser", user);
+        User editUser = userService.findById(user.getId());
+        model.addAttribute("editUser", editUser);
+        User deleteUser = userService.findById(user.getId());
+        model.addAttribute("deleteUser", deleteUser);
         return "admin";
     }
 
     @GetMapping("/admin/add")
     public String addUser(ModelMap model) {
         model.addAttribute("user", new User());
-        return "add";
+        return "admin";
     }
 
     @PostMapping("/admin/add")
-    public String addUser(@ModelAttribute("user") User user, Model model) {
+    public String addUser(@ModelAttribute("user") User user,@RequestParam("role") String  roleName, Model model) {
         if (userService.findByUsername(user.getUsername()) != null) {
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "registration";
+            return "admin";
         }
+        Role role = roleRepository.findByName(roleName);
+        user.setRoles(Set.of(role));
         userService.addUser(user);
         System.out.println("Successfully added user");
         return "redirect:/admin";
     }
 
     @GetMapping("/admin/edit")
-    public String editUser(@RequestParam Long id, ModelMap model) {
+    public String editUser(@RequestParam("id") Long id, ModelMap model) {
         User user = userService.findById(id);
         if (user != null) {
-            model.addAttribute("user", user);
-            return "edit";
+            model.addAttribute("editUser", user);
+            return "admin";
         } else {
             return "redirect:/admin";
         }
     }
 
     @PostMapping("/admin/edit")
-    public String editUser(@ModelAttribute("user") User user) {
+    public String editUser(@ModelAttribute("editUser") User user, @RequestParam("role") String  roleName) {
+        Role role = roleRepository.findByName(roleName);
+        user.setRoles(Set.of(role));
         userService.updateUser(user);
         return "redirect:/admin";
     }
@@ -62,27 +79,16 @@ public class AdminController {
     public String deleteUser(@RequestParam Long id, ModelMap model) {
         User user = userService.findById(id);
         if (user != null) {
-            model.addAttribute("user", user);
-            return "delete";
+            model.addAttribute("deleteUser", user);
+            return "admin";
         } else {
             return "redirect:/admin";
         }
     }
 
     @PostMapping("/admin/delete")
-    public String deleteUser(@ModelAttribute("user") User user) {
+    public String deleteUser(@ModelAttribute("deleteUser") User user) {
         userService.deleteUser(user);
         return "redirect:/admin";
-    }
-
-    @GetMapping("/admin/user")
-    public String viewUser(@RequestParam Long id, ModelMap model) {
-        User user = userService.findById(id);
-        if (user != null) {
-            model.addAttribute("user", user);
-            return "user";
-        } else {
-            return "redirect:/admin";
-        }
     }
 }

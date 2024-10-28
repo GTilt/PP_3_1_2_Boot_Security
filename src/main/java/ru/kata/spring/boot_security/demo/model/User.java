@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,16 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @Column (name = "firstname")
+    private String firstName;
+    @Column (name = "lastname")
+    private String lastName;
+    @Column (name = "age")
+    private int age;
+    @Column (name = "email")
+    @Email
+    private String email;
 
     public User (){
 
@@ -99,4 +110,35 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public @Email String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@Email String email) {
+        this.email = email;
+    }
 }

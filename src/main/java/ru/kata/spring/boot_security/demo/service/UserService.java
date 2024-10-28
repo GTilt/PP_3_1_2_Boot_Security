@@ -50,13 +50,21 @@ public class UserService implements UserDetailsService {
     }
 
 
+
+    public void deleteUser(User user){
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser != null) {
+            userRepository.delete(existingUser);
+        } else {
+            throw new EntityNotFoundException("User not found");
+        }
+    }
+
     @Transactional
-    public void deleteUser(User user) {
-        if (user.getId() != null) {
-            User existingUser = em.find(User.class, user.getId());
-            if (existingUser != null) {
-                em.remove(existingUser);
-            }
+    public void deleteUserById(Long id) {
+        User existingUser = em.find(User.class, id);
+        if (existingUser != null) {
+            em.remove(existingUser);
         } else {
             throw new EntityNotFoundException("User not found");
         }
@@ -68,9 +76,13 @@ public class UserService implements UserDetailsService {
         if (existingUser != null) {
             throw new EntityExistsException("User already exists");
         }
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setAge(user.getAge());
+        user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singleton(new Role(1L, "USER")));
+        user.setRoles(user.getRoles());
         userRepository.save(user);
         return user;
     }
@@ -79,10 +91,15 @@ public class UserService implements UserDetailsService {
     public void updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        existingUser.setUsername(user.getUsername());
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
+        user.setUsername(user.getUsername());
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setAge(user.getAge());
+        user.setEmail(user.getEmail());
+        user.setRoles(user.getRoles());
         existingUser.setRoles(user.getRoles());
         userRepository.save(existingUser);
     }
