@@ -24,13 +24,13 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm")  User userForm, Model model) {
+    public String addUser(@ModelAttribute("userForm")  User userForm, Model model, String role) {
 
         if (userService.findByUsername(userForm.getUsername()) != null){
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "registration";
         }
-        userService.addUser(userForm);
+        userService.addUser(userForm, role);
         return "redirect:/";
     }
 }

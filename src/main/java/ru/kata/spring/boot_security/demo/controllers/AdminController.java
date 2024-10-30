@@ -44,14 +44,12 @@ public class AdminController {
     }
 
     @PostMapping("/admin/add")
-    public String addUser(@ModelAttribute("user") User user,@RequestParam("role") String  roleName, Model model) {
+    public String addUser(@ModelAttribute("user") User user, Model model, @RequestParam String role) {
         if (userService.findByUsername(user.getUsername()) != null) {
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "admin";
         }
-        Role role = roleRepository.findByName(roleName);
-        user.setRoles(Set.of(role));
-        userService.addUser(user);
+        userService.addUser(user, role);
         System.out.println("Successfully added user");
         return "redirect:/admin";
     }
@@ -61,6 +59,7 @@ public class AdminController {
         User user = userService.findById(id);
         if (user != null) {
             model.addAttribute("editUser", user);
+            model.addAttribute("role", user.getRoles());
             return "admin";
         } else {
             return "redirect:/admin";
@@ -68,10 +67,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/edit")
-    public String editUser(@ModelAttribute("editUser") User user, @RequestParam("role") String  roleName) {
-        Role role = roleRepository.findByName(roleName);
-        user.setRoles(Set.of(role));
-        userService.updateUser(user);
+    public String editUser(@ModelAttribute("editUser") User user, @RequestParam String  roleName) {
+        userService.updateUser(user, roleName);
         return "redirect:/admin";
     }
 

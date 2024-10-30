@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityExistsException;
@@ -17,7 +18,9 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -27,11 +30,13 @@ public class UserService implements UserDetailsService {
 
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -71,7 +76,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User addUser(User user) {
+    public User addUser(User user, String roleName) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
             throw new EntityExistsException("User already exists");
@@ -82,13 +87,17 @@ public class UserService implements UserDetailsService {
         user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(user.getRoles());
+        Role role = roleRepository.findByName(roleName);
+        if (role == null) {
+            throw new EntityNotFoundException("Role not found");
+        }
+        user.setRoles(Set.of(role));
         userRepository.save(user);
         return user;
     }
 
     @Transactional
-    public void updateUser(User user) {
+    public void updateUser(User user, String roleName) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
@@ -99,7 +108,11 @@ public class UserService implements UserDetailsService {
         user.setLastName(user.getLastName());
         user.setAge(user.getAge());
         user.setEmail(user.getEmail());
-        user.setRoles(user.getRoles());
+        Role role = roleRepository.findByName(roleName);
+        if (role == null) {
+            throw new EntityNotFoundException("Role not found");
+        }
+        user.setRoles(Set.of(role));
         existingUser.setRoles(user.getRoles());
         userRepository.save(existingUser);
     }

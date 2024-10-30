@@ -97,7 +97,7 @@
                 <div class="tab-pane fade" id="new-user">
                     <!-- Form to create a new user -->
                     <h2>New User</h2>
-                    <form th:action="@{/users/add}" method="post">
+                    <form th:action="@{/admin/add}" method="post">
                         <div class="form-group">
                             <label for="firstName">First Name</label>
                             <input type="text" class="form-control" id="firstName" name="firstName"
@@ -119,20 +119,20 @@
                                    required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Username</label>
-                            <input type="email" class="form-control" id="Username" name="Username" placeholder="Enter Username"
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username"
                                    required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"
-                                   required>
+                                       required>
                         </div>
                         <div class="form-group">
                             <label for="role">Role</label>
                             <select class="form-control" id="role" name="role">
-                                <option value="USER">USER</option>
-                                <option value="ADMIN">ADMIN</option>
+                                <option value="ROLE_USER">USER</option>
+                                <option value="ROLE_ADMIN">ADMIN</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add User</button>
@@ -181,8 +181,8 @@
                     <div class="form-group">
                         <label for="editRole">Role</label>
                         <select class="form-control" id="editRole" name="role">
-                            <option value="USER" th:selected="${editUser.roles == 'USER'}">USER</option>
-                            <option value="ADMIN" th:selected="${editUser.roles == 'ADMIN'}">ADMIN</option>
+                            <option value="ROLE_USER" th:selected="${editUser.roles == 'USER'}">USER</option>
+                            <option value="ROLE_ADMIN" th:selected="${editUser.roles == 'ADMIN'}">ADMIN</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Save changes</button>
