@@ -26,9 +26,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column
     private String username;
-    @Column(unique = true, nullable = false)
+    @Column
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -61,9 +61,7 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -85,15 +83,21 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
     }
 
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }

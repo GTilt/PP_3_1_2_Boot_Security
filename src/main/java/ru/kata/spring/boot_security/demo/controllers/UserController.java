@@ -29,14 +29,4 @@ public class UserController {
         return "user";
     }
 
-    private String formatRole(String role) {
-        switch (role) {
-            case "ROLE_USER":
-                return "Пользователь";
-            case "ROLE_ADMIN":
-                return "Администратор";
-            default:
-                return "Неизвестная роль";
-        }
-    }
 }

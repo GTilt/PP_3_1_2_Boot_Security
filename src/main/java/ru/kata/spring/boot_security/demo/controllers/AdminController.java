@@ -30,10 +30,10 @@ public class AdminController {
         model.addAttribute("allUsers", userService.getUsers());
         User user = userService.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);
-        User editUser = userService.findById(user.getId());
-        model.addAttribute("editUser", editUser);
-        User deleteUser = userService.findById(user.getId());
-        model.addAttribute("deleteUser", deleteUser);
+//        User editUser = userService.findById(user.getId());
+//        model.addAttribute("editUser", editUser);
+//        User deleteUser = userService.findById(user.getId());
+//        model.addAttribute("deleteUser", deleteUser);
         return "admin";
     }
 
@@ -84,8 +84,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/delete")
-    public String deleteUser(@ModelAttribute("deleteUser") User user) {
-        userService.deleteUser(user);
+    public String deleteUser(@ModelAttribute("deleteUser") User user, @RequestParam Long id) {
+        userService.deleteUser(userService.findById(id));
         return "redirect:/admin";
     }
 }

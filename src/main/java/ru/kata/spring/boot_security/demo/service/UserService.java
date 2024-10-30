@@ -55,8 +55,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-
-    public void deleteUser(User user){
+    public void deleteUser(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
             userRepository.delete(existingUser);
@@ -100,20 +99,23 @@ public class UserService implements UserDetailsService {
     public void updateUser(User user, String roleName) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
-        user.setUsername(user.getUsername());
-        user.setFirstName(user.getFirstName());
-        user.setLastName(user.getLastName());
-        user.setAge(user.getAge());
-        user.setEmail(user.getEmail());
+
+        existingUser.setUsername(user.getUsername());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setAge(user.getAge());
+        existingUser.setEmail(user.getEmail());
+
         Role role = roleRepository.findByName(roleName);
         if (role == null) {
             throw new EntityNotFoundException("Role not found");
         }
-        user.setRoles(Set.of(role));
-        existingUser.setRoles(user.getRoles());
+        existingUser.setRoles(Set.of(role));
+
         userRepository.save(existingUser);
     }
 
