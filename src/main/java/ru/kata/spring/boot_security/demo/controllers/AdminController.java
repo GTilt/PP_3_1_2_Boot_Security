@@ -59,7 +59,6 @@ public class AdminController {
         User user = userService.findById(id);
         if (user != null) {
             model.addAttribute("editUser", user);
-            model.addAttribute("role", user.getRoles());
             return "admin";
         } else {
             return "redirect:/admin";
@@ -67,7 +66,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin/edit")
-    public String editUser(@ModelAttribute("editUser") User user, @RequestParam String  roleName) {
+    public String editUser(@ModelAttribute("editUser") User user, @RequestParam String roleName) {
         userService.updateUser(user, roleName);
         return "redirect:/admin";
     }

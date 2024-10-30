@@ -100,21 +100,19 @@ public class UserService implements UserDetailsService {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        }
-
+//        if (user.getPassword() != null && !user.getPassword().isBlank()
+//                && !bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+//            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//        }
         existingUser.setUsername(user.getUsername());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
-
         Role role = roleRepository.findByName(roleName);
-        if (role == null) {
-            throw new EntityNotFoundException("Role not found");
-        }
-        existingUser.setRoles(Set.of(role));
+        Set<Role> userRoles = new HashSet<>();
+        userRoles.add(role);
+        existingUser.setRoles(userRoles);
 
         userRepository.save(existingUser);
     }
