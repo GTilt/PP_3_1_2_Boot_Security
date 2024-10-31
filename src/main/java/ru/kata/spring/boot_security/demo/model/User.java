@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -144,5 +145,10 @@ public class User implements UserDetails {
 
     public void setEmail(@Email String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return roles.toString();
     }
 }

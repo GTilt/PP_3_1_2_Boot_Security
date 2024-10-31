@@ -1,27 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Стиль по умолчанию для ссылок в sidebar */
+        .sidebar .nav-link {
+            color: #000; /* Чёрный цвет текста по умолчанию */
+            background-color: #f8f9fa; /* Светлый фон по умолчанию */
+            transition: background-color 0.3s, color 0.3s; /* Плавный переход для эффекта наведения */
+        }
+
+        /* Эффект наведения: синий фон и белый текст */
+        .sidebar .nav-link:hover {
+            background-color: #007bff; /* Синий фон при наведении */
+            color: #fff; /* Белый текст при наведении */
+        }
+
+        /* Стиль для активной ссылки: синий фон и белый текст */
+        .sidebar .nav-link.active {
+            background-color: #007bff; /* Синий фон для активной ссылки */
+            color: #fff; /* Белый текст для активной ссылки */
+        }
+    </style>
 </head>
 <body>
-<h2>User</h2>
-<div>
-    <table>
-        <thead>
-        <tr>
-            <th>Username</th>
-            <th>Password</th>
-            <th>Role</th>
-        </tr>
-        </thead>
-        <tbody>
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.password}"></td>
-            <td th:text="${user.roles}"></td>
-        </tbody>
-    </table>
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-text text-white"
+          th:utext="'<strong>' + ${user.email} + '</strong> with roles: ' + ${user.roles}"></span>
+    <form th:action="@{/logout}" method="post" class="ml-auto">
+        <button class="btn btn-outline-light btn-sm">Logout</button>
+    </form>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item" th:if="${roles.contains('ROLE_ADMIN')}">
+                        <a class="nav-link" href="/admin" th:href="@{/admin}">
+                            Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/user" th:href="@{/user}">
+                            User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h2 class="mt-4">User information-page</h2>
+            <h5 class="mt-4">About user</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.firstName}"></td>
+                        <td th:text="${user.lastName}"></td>
+                        <td th:text="${user.age}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.roles}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 </div>
-<a th:href="@{/logout}">Logout</a>
 </body>
 </html>

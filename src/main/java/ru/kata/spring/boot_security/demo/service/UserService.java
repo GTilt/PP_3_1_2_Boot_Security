@@ -104,6 +104,7 @@ public class UserService implements UserDetailsService {
 //                && !bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
 //            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 //        }
+
         existingUser.setUsername(user.getUsername());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());

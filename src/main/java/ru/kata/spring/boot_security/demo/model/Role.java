@@ -25,7 +25,9 @@ public class Role implements GrantedAuthority {
     @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-    public Role() {}
+
+    public Role() {
+    }
 
     public Role(Long id, String name) {
         this.name = name;
@@ -63,6 +65,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return name;
+        return name.substring(5);
     }
 }
