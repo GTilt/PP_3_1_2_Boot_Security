@@ -6,23 +6,22 @@
     <title>User Information Page</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Стиль по умолчанию для ссылок в sidebar */
         .sidebar .nav-link {
-            color: #000; /* Чёрный цвет текста по умолчанию */
-            background-color: #f8f9fa; /* Светлый фон по умолчанию */
-            transition: background-color 0.3s, color 0.3s; /* Плавный переход для эффекта наведения */
+            color: #000;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Эффект наведения: синий фон и белый текст */
+
         .sidebar .nav-link:hover {
-            background-color: #007bff; /* Синий фон при наведении */
-            color: #fff; /* Белый текст при наведении */
+            background-color: #007bff;
+            color: #fff;
         }
 
-        /* Стиль для активной ссылки: синий фон и белый текст */
+
         .sidebar .nav-link.active {
-            background-color: #007bff; /* Синий фон для активной ссылки */
-            color: #fff; /* Белый текст для активной ссылки */
+            background-color: #007bff;
+            color: #fff;
         }
     </style>
 </head>
@@ -36,7 +35,6 @@
 </nav>
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
@@ -54,7 +52,6 @@
             </div>
         </nav>
 
-        <!-- Main Content -->
         <main class="col-md-9 ml-sm-auto col-lg-10 px-4">
             <h2 class="mt-4">User information-page</h2>
             <h5 class="mt-4">About user</h5>
@@ -85,5 +82,14 @@
         </main>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>

@@ -7,13 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
-import java.util.Set;
 
 @Controller
 public class AdminController {
@@ -30,10 +28,6 @@ public class AdminController {
         model.addAttribute("allUsers", userService.getUsers());
         User user = userService.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);
-//        User editUser = userService.findById(user.getId());
-//        model.addAttribute("editUser", editUser);
-//        User deleteUser = userService.findById(user.getId());
-//        model.addAttribute("deleteUser", deleteUser);
         return "admin";
     }
 

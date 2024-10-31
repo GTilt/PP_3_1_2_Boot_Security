@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,12 +98,6 @@ public class UserService implements UserDetailsService {
     public void updateUser(User user, String roleName) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-//        if (user.getPassword() != null && !user.getPassword().isBlank()
-//                && !bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-//            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-//        }
-
         existingUser.setUsername(user.getUsername());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());

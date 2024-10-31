@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -35,21 +34,21 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    @Column (name = "firstname")
+    @Column(name = "firstname")
     private String firstName;
-    @Column (name = "lastname")
+    @Column(name = "lastname")
     private String lastName;
-    @Column (name = "age")
+    @Column(name = "age")
     private int age;
-    @Column (name = "email")
+    @Column(name = "email")
     @Email
     private String email;
 
-    public User (){
+    public User() {
 
     }
 
-    public User (String username, List<String> roles) {
+    public User(String username, List<String> roles) {
         this.username = username;
         this.roles = new HashSet<>();
     }
@@ -61,7 +60,6 @@ public class User implements UserDetails {
     public void setId(Long id) {
         this.id = id;
     }
-
 
 
     @Override
