@@ -13,9 +13,7 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
@@ -23,10 +21,6 @@ import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
-
-    @PersistenceContext
-    private EntityManager em;
-
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -54,20 +48,11 @@ public class UserService implements UserDetailsService {
     }
 
 
+    @Transactional
     public void deleteUser(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
             userRepository.delete(existingUser);
-        } else {
-            throw new EntityNotFoundException("User not found");
-        }
-    }
-
-    @Transactional
-    public void deleteUserById(Long id) {
-        User existingUser = em.find(User.class, id);
-        if (existingUser != null) {
-            em.remove(existingUser);
         } else {
             throw new EntityNotFoundException("User not found");
         }
@@ -116,7 +101,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User findById(Long id) {
-        return em.find(User.class, id);
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     @Autowired

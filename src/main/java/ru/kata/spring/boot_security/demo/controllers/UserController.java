@@ -20,12 +20,11 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String UserInfo(Principal principal, Model model) {
+    public String userGetInfo(Principal principal, Model model) {
         User user = userService.findByUsername(principal.getName());
         Set<String> roles = AuthorityUtils.authorityListToSet(user.getRoles());
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
         return "user";
     }
-
 }
