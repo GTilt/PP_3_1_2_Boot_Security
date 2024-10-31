@@ -202,6 +202,7 @@
                                 <option value="ROLE_ADMIN" th:selected="${user.roles == 'ADMIN'}">ADMIN</option>
                             </select>
                         </div>
+                        <input type="hidden" name="password" th:value="${user.password}"/>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <form th:action="@{/admin/edit}" method="post">
