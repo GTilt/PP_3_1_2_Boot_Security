@@ -2,7 +2,6 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,11 +70,11 @@ public class AdminController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<User> editUser(@RequestBody @Valid User user, @RequestParam String roleName) {
+    public ResponseEntity<User> editUser(@RequestBody @Valid User user) {
         if(userServiceImpl.findByUsername(user.getUsername()) == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userServiceImpl.updateUser(user, roleName);
+        userServiceImpl.updateUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -91,11 +90,11 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestBody User user, @RequestParam Long id) {
-        if(userServiceImpl.findById(id) == null){
+    public ResponseEntity<Void> deleteUser(@RequestBody User user) {
+        if(userServiceImpl.findById(user.getId()) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userServiceImpl.deleteUser(userServiceImpl.findById(id));
+        userServiceImpl.deleteUser(userServiceImpl.findById(user.getId()));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

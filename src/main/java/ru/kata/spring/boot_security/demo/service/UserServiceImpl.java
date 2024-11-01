@@ -59,10 +59,6 @@ public class UserServiceImpl implements UserService {
         user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-//        Role role = roleService.findByName(roleName);
-//        if (role == null) {
-//            throw new EntityNotFoundException("Role not found");
-//        }
         user.setRoles(roleName);
         userRepository.save(user);
         return user;
@@ -70,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(User user, String roleName) {
+    public void updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         existingUser.setUsername(user.getUsername());
@@ -78,10 +74,20 @@ public class UserServiceImpl implements UserService {
         existingUser.setLastName(user.getLastName());
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
-        Role role = roleService.findByName(roleName);
-        Set<Role> userRoles = new HashSet<>();
-        userRoles.add(role);
-        existingUser.setRoles(userRoles);
+        Set<Role> currentRoles = existingUser.getRoles();
+
+        Set<Role> newRoles = new HashSet<>();
+        for (Role role : user.getRoles()) {
+            Role existingRole = roleService.findByName(role.getName());
+            if (existingRole != null) {
+                newRoles.add(existingRole);
+            } else {
+                throw new EntityNotFoundException("Role not found: " + role.getName());
+            }
+        }
+        currentRoles.removeAll(newRoles);
+        currentRoles.addAll(newRoles);
+        existingUser.setRoles(currentRoles);
 
         userRepository.save(existingUser);
     }

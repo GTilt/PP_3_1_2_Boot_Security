@@ -13,7 +13,7 @@ public interface UserService {
 
     User addUser(User user, Set<Role> roleName);
 
-    void updateUser(User user, String roleName);
+    void updateUser(User user);
 
     User findByUsername(String username);
 
