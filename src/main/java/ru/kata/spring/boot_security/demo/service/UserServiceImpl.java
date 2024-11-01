@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User addUser(User user, String roleName) {
+    public User addUser(User user, Set<Role> roleName) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
             throw new EntityExistsException("User already exists");
@@ -59,11 +59,11 @@ public class UserServiceImpl implements UserService {
         user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Role role = roleService.findByName(roleName);
-        if (role == null) {
-            throw new EntityNotFoundException("Role not found");
-        }
-        user.setRoles(Set.of(role));
+//        Role role = roleService.findByName(roleName);
+//        if (role == null) {
+//            throw new EntityNotFoundException("Role not found");
+//        }
+        user.setRoles(roleName);
         userRepository.save(user);
         return user;
     }

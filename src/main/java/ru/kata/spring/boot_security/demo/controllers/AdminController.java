@@ -1,21 +1,28 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
-@Controller
+@RestController
+@RequestMapping("/admin")
 public class AdminController {
     private final UserServiceImpl userServiceImpl;
     private final RoleRepository roleRepository;
@@ -25,37 +32,34 @@ public class AdminController {
         this.roleRepository = roleRepository;
     }
 
-    @GetMapping("/admin")
-    public String userList(Model model, Principal principal) {
-        model.addAttribute("allUsers", userServiceImpl.getUsers());
-        User user = userServiceImpl.findByUsername(principal.getName());
-        model.addAttribute("currentUser", user);
-        return "admin";
+    @GetMapping()
+    public ResponseEntity<Map<String, Object>> userList(Principal principal) {
+        List<User> users = userServiceImpl.getUsers();
+        User currentUser = userServiceImpl.findByUsername(principal.getName());
+        Map<String, Object> response = Map.of(
+                "allUsers", users,
+                "currentUser", currentUser
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/add")
+    @GetMapping("/add")
     public String addUser(ModelMap model) {
         model.addAttribute("user", new User());
         return "admin";
     }
 
-    @PostMapping("/admin/add")
-    public String addUser(@ModelAttribute("user") @Valid User user, Model model, @RequestParam String role, BindingResult bindingResult) {
-       if(bindingResult.hasErrors()) {
-           model.addAttribute("user", new User());
-           return "admin";
+    @PostMapping("/add")
+    public ResponseEntity<User> addUser(@RequestBody @Valid User user) {
+       if(userServiceImpl.findByUsername(user.getUsername()) != null) {
+           return new ResponseEntity<>(HttpStatus.CONFLICT);
        }
-
-        if (userServiceImpl.findByUsername(user.getUsername()) != null) {
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "admin";
-        }
-        userServiceImpl.addUser(user, role);
+        User createUser = userServiceImpl.addUser(user, user.getRoles());
         System.out.println("Successfully added user");
-        return "redirect:/admin";
+        return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/admin/edit")
+    @GetMapping("/edit")
     public String editUser(@RequestParam("id") Long id, ModelMap model) {
         User user = userServiceImpl.findById(id);
         if (user != null) {
@@ -66,17 +70,16 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/admin/edit")
-    public String editUser(@ModelAttribute("editUser") @Valid User user, @RequestParam String roleName, BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()) {
-            model.addAttribute("editUser", user);
-            return "admin";
+    @PutMapping("/edit")
+    public ResponseEntity<User> editUser(@RequestBody @Valid User user, @RequestParam String roleName) {
+        if(userServiceImpl.findByUsername(user.getUsername()) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         userServiceImpl.updateUser(user, roleName);
-        return "redirect:/admin";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/delete")
+    @GetMapping("/delete")
     public String deleteUser(@RequestParam Long id, ModelMap model) {
         User user = userServiceImpl.findById(id);
         if (user != null) {
@@ -87,9 +90,12 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/admin/delete")
-    public String deleteUser(@ModelAttribute("deleteUser") User user, @RequestParam Long id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@RequestBody User user, @RequestParam Long id) {
+        if(userServiceImpl.findById(id) == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         userServiceImpl.deleteUser(userServiceImpl.findById(id));
-        return "redirect:/admin";
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
