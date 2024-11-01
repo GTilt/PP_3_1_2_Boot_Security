@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,20 +33,15 @@ public class AdminController {
     }
 
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> userList(Principal principal) {
+    public ResponseEntity<Map<String, Object>> userList(Principal principal, Model model) {
         List<User> users = userServiceImpl.getUsers();
         User currentUser = userServiceImpl.findByUsername(principal.getName());
         Map<String, Object> response = Map.of(
                 "allUsers", users,
                 "currentUser", currentUser
         );
+        model.addAttribute("allUsers", users);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/add")
-    public String addUser(ModelMap model) {
-        model.addAttribute("user", new User());
-        return "admin";
     }
 
     @PostMapping("/add")
@@ -58,16 +54,6 @@ public class AdminController {
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/edit")
-    public String editUser(@RequestParam("id") Long id, ModelMap model) {
-        User user = userServiceImpl.findById(id);
-        if (user != null) {
-            model.addAttribute("editUser", user);
-            return "admin";
-        } else {
-            return "redirect:/admin";
-        }
-    }
 
     @PutMapping("/edit")
     public ResponseEntity<User> editUser(@RequestBody @Valid User user) {
@@ -78,16 +64,6 @@ public class AdminController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/delete")
-    public String deleteUser(@RequestParam Long id, ModelMap model) {
-        User user = userServiceImpl.findById(id);
-        if (user != null) {
-            model.addAttribute("deleteUser", user);
-            return "admin";
-        } else {
-            return "redirect:/admin";
-        }
-    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteUser(@RequestBody User user) {
