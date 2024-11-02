@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     private final UserServiceImpl userServiceImpl;
     private final RoleRepository roleRepository;
@@ -33,14 +33,13 @@ public class AdminController {
     }
 
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> userList(Principal principal, Model model) {
+    public ResponseEntity<Map<String, Object>> userList(Principal principal) {
         List<User> users = userServiceImpl.getUsers();
         User currentUser = userServiceImpl.findByUsername(principal.getName());
         Map<String, Object> response = Map.of(
                 "allUsers", users,
                 "currentUser", currentUser
         );
-        model.addAttribute("allUsers", users);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
