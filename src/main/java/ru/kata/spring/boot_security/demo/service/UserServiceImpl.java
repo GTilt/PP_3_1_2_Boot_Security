@@ -9,6 +9,7 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(roleName);
+        Set<Role> existingRoles = new HashSet<>();
+        for (Role role : roleName) {
+            Role existingRole = roleService.findByName(role.getName());
+            if (existingRole != null) {
+                existingRoles.add(existingRole);
+            }
+        }
+        user.setRoles(existingRoles);
         userRepository.save(user);
         return user;
     }
