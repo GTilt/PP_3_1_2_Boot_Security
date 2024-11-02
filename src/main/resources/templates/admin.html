@@ -138,10 +138,14 @@
     async function loadUsers() {
         try {
             const response = await fetch('/api/admin');
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке пользователей.');
+            }
             const data = await response.json();
             renderUserTable(data.allUsers);
         } catch (error) {
             console.error('Error fetching users:', error);
+            alert('Ошибка при загрузке пользователей.');
         }
     }
 
@@ -220,27 +224,31 @@
     async function createUser() {
         const form = document.getElementById('createUserForm');
         const formData = new FormData(form);
-
-        // Преобразуем данные формы в объект
         const userData = Object.fromEntries(formData.entries());
 
-        // Создаем массив ролей на основе выбранного значения
-        userData.roles = [{ name: userData.role }]; // преобразуем выбранную роль в объект с именем
 
-        delete userData.role; // удаляем из userData старое поле role, чтобы не отправлять его дважды
+        userData.roles = [{ name: userData.role }];
 
-        // Отправляем запрос на сервер
-        await fetch('/api/admin/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData)
-        });
+        delete userData.role;
 
-        form.reset();
-        loadUsers(); // Перезагружаем таблицу пользователей
+        try {
+            const response = await fetch('/api/admin/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                window.location.href = '/admin';
+            } else {
+                const errorData = await response.json();
+                alert(`Ошибка: ${errorData.message || 'Не удалось добавить'}`);
+            }
+        } catch (error) {
+            console.error('Error adding user:', error);
+            alert('Произошла ошибка при добавлении');
+        }
     }
-
-
 </script>
 </body>
 </html>
