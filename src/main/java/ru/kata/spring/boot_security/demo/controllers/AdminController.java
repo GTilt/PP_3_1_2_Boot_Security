@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,23 +54,33 @@ public class AdminController {
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
 
-
-    @PutMapping("/edit")
-    public ResponseEntity<User> editUser(@RequestBody @Valid User user) {
-        if(userServiceImpl.findByUsername(user.getUsername()) == null) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        User user = userServiceImpl.findById(id);
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<User> editUser(@PathVariable Long id, @RequestBody @Valid User user) {
+        if(userServiceImpl.findById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        user.setId(id);
         userServiceImpl.updateUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestBody User user) {
-        if(userServiceImpl.findById(user.getId()) == null){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if(userServiceImpl.findById(id) == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userServiceImpl.deleteUser(userServiceImpl.findById(user.getId()));
+        userServiceImpl.deleteUser(userServiceImpl.findById(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -9,10 +9,11 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -82,20 +83,12 @@ public class UserServiceImpl implements UserService {
         existingUser.setLastName(user.getLastName());
         existingUser.setAge(user.getAge());
         existingUser.setEmail(user.getEmail());
-        Set<Role> currentRoles = existingUser.getRoles();
+        Set<Role> newRoles = user.getRoles().stream()
+                .map(role -> roleService.findByName(role.getName()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
-        Set<Role> newRoles = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            Role existingRole = roleService.findByName(role.getName());
-            if (existingRole != null) {
-                newRoles.add(existingRole);
-            } else {
-                throw new EntityNotFoundException("Role not found: " + role.getName());
-            }
-        }
-        currentRoles.removeAll(newRoles);
-        currentRoles.addAll(newRoles);
-        existingUser.setRoles(currentRoles);
+        existingUser.setRoles(newRoles);
 
         userRepository.save(existingUser);
     }
