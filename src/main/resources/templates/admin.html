@@ -19,7 +19,7 @@
 
         .center-label {
             text-align: center;
-            display: block; /* чтобы текст размещался над полем */
+            display: block;
         }
     </style>
 </head>
@@ -75,15 +75,15 @@
                             </tr>
                             </thead>
                             <tbody id="userTableBody">
-                            <!-- Rows will be dynamically injected here -->
+
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="tab-pane fade  justify-content-center" id="new-user">
-                    <div class="col-md-6"> <!-- Контейнер для ограничения ширины формы -->
-                        <h2 class="text-center">Add New User</h2> <!-- Выровнено по центру -->
+                <div class="tab-pane fade justify-content-center" id="new-user">
+                    <div class="col-md-6 mx-auto text-center">
+                        <h2 class="text-center">Add New User</h2>
                         <form id="createUserForm">
                             <div class="form-group">
                                 <label class="center-label"><strong>First Name</strong></label>
@@ -117,7 +117,7 @@
                                 </select>
                             </div>
                             <button type="button" class="btn btn-success btn-block" onclick="createUser()">Create User
-                            </button> <!-- Полная ширина кнопки -->
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -126,10 +126,9 @@
     </div>
 </div>
 
-<!-- Edit Modal -->
+
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
-<!-- Delete Modal -->
 <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -241,9 +240,8 @@
         const formData = new FormData(form);
         const userData = Object.fromEntries(formData.entries());
 
-        // Формируем роли как массив объектов
         userData.roles = [{name: userData.role}];
-        delete userData.role; // Удаляем из userData поле `role`, поскольку роли уже установлены как массив объектов
+        delete userData.role;
 
         try {
             const response = await fetch(`/api/admin/edit/${userData.id}`, {
@@ -254,7 +252,7 @@
 
             if (response.ok) {
                 $('#editUserModal').modal('hide');
-                loadUsers(); // Перезагружаем список пользователей
+                loadUsers();
             } else {
                 alert('Ошибка при сохранении изменений.');
             }
@@ -298,7 +296,6 @@
             const response = await fetch(`/api/admin/${userId}`);
             const user = await response.json();
 
-            // Заполняем модальное окно данными пользователя
             document.getElementById('deleteUserModal').innerHTML = `
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -323,7 +320,7 @@
                 </div>
             </div>`;
 
-            $('#deleteUserModal').modal('show'); // Открываем модальное окно удаления
+            $('#deleteUserModal').modal('show');
         } catch (error) {
             console.error('Error opening delete modal:', error);
         }
@@ -338,8 +335,8 @@
             });
 
             if (response.ok) {
-                $('#deleteUserModal').modal('hide'); // Закрываем модальное окно
-                loadUsers(); // Обновляем список пользователей на странице
+                $('#deleteUserModal').modal('hide');
+                loadUsers();
             } else {
                 alert('Error deleting user.');
             }
@@ -348,8 +345,6 @@
             alert('An error occurred while deleting the user.');
         }
     }
-
-
 </script>
 </body>
 </html>

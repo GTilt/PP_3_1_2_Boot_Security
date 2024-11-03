@@ -76,7 +76,6 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Запрос данных о пользователе
         fetch('/api/user')
             .then(response => {
                 if (!response.ok) {
