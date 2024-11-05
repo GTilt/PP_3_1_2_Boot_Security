@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -22,18 +21,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    private final UserServiceImpl userServiceImpl;
-    private final RoleRepository roleRepository;
+    private final UserService userService;
 
-    public AdminController(UserServiceImpl userServiceImpl, RoleRepository roleRepository) {
-        this.userServiceImpl = userServiceImpl;
-        this.roleRepository = roleRepository;
+    public AdminController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping()
     public ResponseEntity<Map<String, Object>> userList(Principal principal) {
-        List<User> users = userServiceImpl.getUsers();
-        User currentUser = userServiceImpl.findByUsername(principal.getName());
+        List<User> users = userService.getUsers();
+        User currentUser = userService.findByUsername(principal.getName());
         Map<String, Object> response = Map.of(
                 "allUsers", users,
                 "currentUser", currentUser
@@ -43,41 +40,29 @@ public class AdminController {
 
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody @Valid User user) {
-        if (userServiceImpl.findByUsername(user.getUsername()) != null) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        User createUser = userServiceImpl.addUser(user, user.getRoles());
+        User createUser = userService.addUser(user, user.getRoles());
         System.out.println("Successfully added user");
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        User user = userServiceImpl.findById(id);
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<User> editUser(@PathVariable Long id, @RequestBody @Valid User user) {
-        if (userServiceImpl.findById(id) == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         user.setId(id);
-        userServiceImpl.updateUser(user);
+        userService.updateUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (userServiceImpl.findById(id) == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        userServiceImpl.deleteUser(userServiceImpl.findById(id));
+        userService.deleteUser(userService.findById(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,10 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Optional<User> userWithSameUsername = Optional.ofNullable(userRepository.findByUsername(user.getUsername()));
+        if (userWithSameUsername.isPresent() && !userWithSameUsername.get().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Username not unique");
+        }
         existingUser.setUsername(user.getUsername());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
