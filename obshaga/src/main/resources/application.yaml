@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: obshaga
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        default_schema: obshezhitiye
+
+  liquibase:
+    liquibase-schema: public
+    default-schema: obshezhitiye
+    change-log: changelog/release-0.1.0.0/changelog-001.yaml
+    enabled: true
+    drop-first: false
+
+server:
+  port: 8080

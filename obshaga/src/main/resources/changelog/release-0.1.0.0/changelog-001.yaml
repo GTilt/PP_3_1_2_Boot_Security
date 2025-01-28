@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-05
+      author: Sergey Pershin
+      comment: Create obshezhitiye schema
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ";"
+            sql: |-
+              CREATE SCHEMA IF NOT EXISTS obshezhitiye;
+
+  - changeSet:
+      id: 02-05
+      author: Sergey Pershin
+      comment: Create obshezhitiye tables
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ";"
+            sql: |-
+              SET SCHEMA 'obshezhitiye';
+
+              CREATE TABLE IF NOT EXISTS obshezhitiye.users 
+              (
+                id BIGSERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password VARCHAR(120) NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS obshezhitiye.roles 
+              (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(20) UNIQUE NOT NULL
+              );
+
+              CREATE TABLE IF NOT EXISTS obshezhitiye.user_roles (
+                user_id BIGINT NOT NULL,
+                role_id INT NOT NULL,
+                PRIMARY KEY (user_id, role_id),
+                CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES obshezhitiye.users(id) ON DELETE CASCADE,
+                CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES obshezhitiye.roles(id) ON DELETE CASCADE
+              );
+
+              CREATE TABLE IF NOT EXISTS obshezhitiye.students (
+                id BIGSERIAL PRIMARY KEY,
+                first_name VARCHAR(50) NOT NULL,
+                last_name VARCHAR(50) NOT NULL,
+                student_id VARCHAR(20) UNIQUE NOT NULL,
+                room_number VARCHAR(10) NOT NULL,
+                is_present BOOLEAN DEFAULT FALSE NOT NULL,
+                user_id BIGINT NOT NULL,
+                CONSTRAINT fk_student_user FOREIGN KEY (user_id) REFERENCES obshezhitiye.users(id) ON DELETE CASCADE
+              );
+
+  - changeSet:
+      id: 03-05
+      author: Sergey Pershin
+      comment: Insert default roles
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ";"
+            sql: |-
+              SET SCHEMA 'obshezhitiye';
+
+              INSERT INTO obshezhitiye.roles (name) VALUES 
+              ('ROLE_STUDENT'),
+              ('ROLE_GUARD'),
+              ('ROLE_COMMANDANT')
+              ON CONFLICT (name) DO NOTHING;
